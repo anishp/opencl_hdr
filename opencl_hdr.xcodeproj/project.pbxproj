@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		7D745DFD1968284400D95EBB /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D745DFC1968284400D95EBB /* main.cpp */; };
 		7D745DFF1968284400D95EBB /* opencl_hdr.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7D745DFE1968284400D95EBB /* opencl_hdr.1 */; };
+		7D745E061968286600D95EBB /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D745E051968286600D95EBB /* OpenCL.framework */; };
+		7D745E0A1968293900D95EBB /* compute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D745E091968293900D95EBB /* compute.cpp */; };
+		7D745E0E19684DA600D95EBB /* libopencv_highgui.2.4.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D745E0D19684DA600D95EBB /* libopencv_highgui.2.4.9.dylib */; };
+		7D745E1019684EA600D95EBB /* libopencv_core.2.4.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D745E0F19684EA600D95EBB /* libopencv_core.2.4.9.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,6 +32,11 @@
 		7D745DF91968284400D95EBB /* opencl_hdr */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = opencl_hdr; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D745DFC1968284400D95EBB /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		7D745DFE1968284400D95EBB /* opencl_hdr.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = opencl_hdr.1; sourceTree = "<group>"; };
+		7D745E051968286600D95EBB /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
+		7D745E091968293900D95EBB /* compute.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = compute.cpp; sourceTree = "<group>"; };
+		7D745E0B1968295800D95EBB /* compute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compute.h; sourceTree = "<group>"; };
+		7D745E0D19684DA600D95EBB /* libopencv_highgui.2.4.9.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_highgui.2.4.9.dylib; path = ../../../../usr/local/lib/libopencv_highgui.2.4.9.dylib; sourceTree = "<group>"; };
+		7D745E0F19684EA600D95EBB /* libopencv_core.2.4.9.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_core.2.4.9.dylib; path = ../../../../usr/local/lib/libopencv_core.2.4.9.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,6 +44,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7D745E1019684EA600D95EBB /* libopencv_core.2.4.9.dylib in Frameworks */,
+				7D745E0E19684DA600D95EBB /* libopencv_highgui.2.4.9.dylib in Frameworks */,
+				7D745E061968286600D95EBB /* OpenCL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -44,6 +56,8 @@
 		7D745DF01968284400D95EBB = {
 			isa = PBXGroup;
 			children = (
+				7D745E0C19684D8A00D95EBB /* OpenCV */,
+				7D745E051968286600D95EBB /* OpenCL.framework */,
 				7D745DFB1968284400D95EBB /* opencl_hdr */,
 				7D745DFA1968284400D95EBB /* Products */,
 			);
@@ -61,9 +75,20 @@
 			isa = PBXGroup;
 			children = (
 				7D745DFC1968284400D95EBB /* main.cpp */,
+				7D745E091968293900D95EBB /* compute.cpp */,
+				7D745E0B1968295800D95EBB /* compute.h */,
 				7D745DFE1968284400D95EBB /* opencl_hdr.1 */,
 			);
 			path = opencl_hdr;
+			sourceTree = "<group>";
+		};
+		7D745E0C19684D8A00D95EBB /* OpenCV */ = {
+			isa = PBXGroup;
+			children = (
+				7D745E0F19684EA600D95EBB /* libopencv_core.2.4.9.dylib */,
+				7D745E0D19684DA600D95EBB /* libopencv_highgui.2.4.9.dylib */,
+			);
+			name = OpenCV;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -117,6 +142,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7D745E0A1968293900D95EBB /* compute.cpp in Sources */,
 				7D745DFD1968284400D95EBB /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -197,6 +223,12 @@
 		7D745E031968284400D95EBB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					/usr/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -204,6 +236,12 @@
 		7D745E041968284400D95EBB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					/usr/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
