@@ -11,18 +11,14 @@
 #include <OpenCL/OpenCL.h>
 #include <unistd.h>
 
-#define FILTER_SIZE 9
-
 
 int oclCompute(unsigned char* h_image, unsigned char* h_bChannel,
             unsigned char* h_gChannel, unsigned char* h_rChannel,
-            float filter[],
-            unsigned int width, unsigned int height)
+            unsigned int width, unsigned int height,
+            float filter[], int filter_width)
 {
     
     int err;
-    size_t global;  // global domain size
-    size_t local;   // local domain size
     
     cl_device_id device_id;
     cl_context context;
@@ -105,7 +101,7 @@ int oclCompute(unsigned char* h_image, unsigned char* h_bChannel,
     d_bChannel = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(unsigned char) * width * height, NULL, NULL);
     d_gChannel = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(unsigned char) * width * height, NULL, NULL);
     d_rChannel = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(unsigned char) * width * height, NULL, NULL);
-    d_filter = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(float) * FILTER_SIZE, NULL, NULL);
+    d_filter = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(float) * filter_width * filter_width, NULL, NULL);
     
     if(!input || !d_bChannel || !d_gChannel || !d_rChannel || !d_filter)
     {
@@ -120,7 +116,7 @@ int oclCompute(unsigned char* h_image, unsigned char* h_bChannel,
         return EXIT_FAILURE;
     }
     
-    err = clEnqueueWriteBuffer(commands, d_filter, CL_TRUE, 0, sizeof(float) * FILTER_SIZE, filter, 0, NULL, NULL);
+    err = clEnqueueWriteBuffer(commands, d_filter, CL_TRUE, 0, sizeof(float) * filter_width * filter_width, filter, 0, NULL, NULL);
     if(err != CL_SUCCESS) {
         printf("Error: could not copy data to device");
         return EXIT_FAILURE;
@@ -134,12 +130,14 @@ int oclCompute(unsigned char* h_image, unsigned char* h_bChannel,
     err |= clSetKernelArg(kernel, 4, sizeof(unsigned int), &width);
     err |= clSetKernelArg(kernel, 5, sizeof(unsigned int), &height);
     err |= clSetKernelArg(kernel, 6, sizeof(cl_mem), &d_filter);
+    err |= clSetKernelArg(kernel, 7, sizeof(int), &filter_width);
     if (err!=CL_SUCCESS) {
         printf("Error: could not set kernel arguments\n");
         return EXIT_FAILURE;
     }
     
     
+    /*
     err = clGetKernelWorkGroupInfo(kernel, device_id, CL_KERNEL_WORK_GROUP_SIZE, sizeof(local), &local, NULL);
     if (err != CL_SUCCESS) {
         printf("Error: failed to retrieve workgroup infor\n");
@@ -148,11 +146,10 @@ int oclCompute(unsigned char* h_image, unsigned char* h_bChannel,
     else {
         printf("Workgroup size is %zu\n", local);
     }
-    
-    global = (width * height) + ((width * height)%local);
+    */
     
     size_t local2d[2] = {16, 16};
-    size_t global2d[2] = {(width + width%local2d[0]), (height + height%local2d[1])};
+    size_t global2d[2] = {(height + height%local2d[1]), (width + width%local2d[0])};
     
     err = clEnqueueNDRangeKernel(commands, kernel, 2, NULL, (size_t *) global2d, (size_t *)local2d, 0, NULL, NULL);
     if (err) {
