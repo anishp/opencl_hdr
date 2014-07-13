@@ -29,13 +29,17 @@ int main(int argc, char* argv[])
     unsigned int width = img.rows;
     unsigned int height = img.cols;
     
+    float filter[9] = { 0.0f, 0.2f, 0.0f,
+                        0.2f, 0.2f, 0.0f,
+                        0.0f, 0.2f, 0.0f };
+    
     // Single channel matrices to store separated
     Mat bChannel(width, height, CV_8UC1);
     Mat gChannel(width, height, CV_8UC1);
     Mat rChannel(width, height, CV_8UC1);
     
     // call the compute function which sets up and launches the openCL kernel
-    if(oclCompute(img.data, bChannel.data, gChannel.data, rChannel.data, width, height)!=EXIT_SUCCESS)
+    if(oclCompute(img.data, bChannel.data, gChannel.data, rChannel.data, filter, width, height)!=EXIT_SUCCESS)
         cout<<"Error!\n";
    
     /*
@@ -43,9 +47,9 @@ int main(int argc, char* argv[])
         cout<<"Error!\n";
      */
     
-    imwrite("b.jpg", bChannel);
-    imwrite("g.jpg", gChannel);
-    imwrite("r.jpg", rChannel);
+    imwrite("/Users/anish1337/res/b.jpg", bChannel);
+    imwrite("/Users/anish1337/res/g.jpg", gChannel);
+    imwrite("/Users/anish1337/res/r.jpg", rChannel);
     cout<<"\n";
     
     return 0;

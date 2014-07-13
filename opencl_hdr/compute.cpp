@@ -10,20 +10,23 @@
 #include <stdio.h>
 #include <OpenCL/OpenCL.h>
 
+#define FILTER_SIZE 9
+
 const char* kernelSource = "\n" \
-"__kernel void separateChannels(__global unsigned char* input, __global unsigned char* bChannel,     \n"
-"                               __global unsigned char* gChannel, __global unsigned char* rChannel,  \n"
-"                               const unsigned int width, const unsigned int height)                 \n"
-" {                                                                                                  \n"
-"   int i = get_global_id(0);                                                                        \n"
-"   if(i<(width*height)) {                                                                           \n"
-"     bChannel[i] = input[i * 3];                                                                    \n"
-"     gChannel[i] = input[i * 3 + 1];                                                                \n"
-"     rChannel[i] = input[i * 3 +2]; }                                                               \n"
-"}                                                                                                   \n";
+"__kernel void separateChannels(__global unsigned char* input, __global unsigned char* bChannel,               \n"
+"                               __global unsigned char* gChannel, __global unsigned char* rChannel,            \n"
+"                               const unsigned int width, const unsigned int height, __constant float* filter) \n"
+" {                                                                                                            \n"
+"   int i = get_global_id(0);                                                                                  \n"
+"   if(i<(width*height)) {                                                                                     \n"
+"     bChannel[i] = input[i * 3];                                                                              \n"
+"     gChannel[i] = input[i * 3 + 1];                                                                          \n"
+"     rChannel[i] = input[i * 3 +2]; }                                                                         \n"
+"}                                                                                                             \n";
 
 int oclCompute(unsigned char* h_image, unsigned char* h_bChannel,
             unsigned char* h_gChannel, unsigned char* h_rChannel,
+            float filter[],
             unsigned int width, unsigned int height)
 {
     
@@ -41,9 +44,10 @@ int oclCompute(unsigned char* h_image, unsigned char* h_bChannel,
     cl_mem d_bChannel;
     cl_mem d_gChannel;
     cl_mem d_rChannel;
+    cl_mem d_filter;
     
     
-    int gpu = 0;
+    int gpu = 1;
     err = clGetDeviceIDs(NULL, gpu ? CL_DEVICE_TYPE_GPU:CL_DEVICE_TYPE_CPU, 1, &device_id, NULL);
     if (err!=CL_SUCCESS) {
         printf("Error: failed to create a device group");
@@ -91,8 +95,9 @@ int oclCompute(unsigned char* h_image, unsigned char* h_bChannel,
     d_bChannel = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(unsigned char) * width * height, NULL, NULL);
     d_gChannel = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(unsigned char) * width * height, NULL, NULL);
     d_rChannel = clCreateBuffer(context, CL_MEM_WRITE_ONLY, sizeof(unsigned char) * width * height, NULL, NULL);
+    d_filter = clCreateBuffer(context, CL_MEM_READ_ONLY, sizeof(float) * FILTER_SIZE, NULL, NULL);
     
-    if(!input || !d_bChannel || !d_gChannel || !d_rChannel)
+    if(!input || !d_bChannel || !d_gChannel || !d_rChannel || !d_filter)
     {
         printf("Error: could not allocate device memory\n");
         return EXIT_FAILURE;
@@ -105,6 +110,12 @@ int oclCompute(unsigned char* h_image, unsigned char* h_bChannel,
         return EXIT_FAILURE;
     }
     
+    err = clEnqueueWriteBuffer(commands, d_filter, CL_TRUE, 0, sizeof(float) * FILTER_SIZE, filter, 0, NULL, NULL);
+    if(err != CL_SUCCESS) {
+        printf("Error: could not copy data to device");
+        return EXIT_FAILURE;
+    }
+    
     err = 0;
     err = clSetKernelArg(kernel, 0, sizeof(cl_mem), &input);
     err |= clSetKernelArg(kernel, 1, sizeof(cl_mem), &d_bChannel);
@@ -112,6 +123,7 @@ int oclCompute(unsigned char* h_image, unsigned char* h_bChannel,
     err |= clSetKernelArg(kernel, 3, sizeof(cl_mem), &d_rChannel);
     err |= clSetKernelArg(kernel, 4, sizeof(unsigned int), &width);
     err |= clSetKernelArg(kernel, 5, sizeof(unsigned int), &height);
+    err |= clSetKernelArg(kernel, 6, sizeof(cl_mem), &d_filter);
     if (err!=CL_SUCCESS) {
         printf("Error: could not set kernel arguments\n");
         return EXIT_FAILURE;
@@ -129,8 +141,10 @@ int oclCompute(unsigned char* h_image, unsigned char* h_bChannel,
     
     global = (width * height) + ((width * height)%local);
     
+    size_t local2d[2] = {16, 16};
+    size_t global2d[2] = {(width + width%local2d[0]), (height + height%local2d[1])};
     
-    err = clEnqueueNDRangeKernel(commands, kernel, 1, NULL, &global, &local, 0, NULL, NULL);
+    err = clEnqueueNDRangeKernel(commands, kernel, 2, NULL, (size_t *) global2d, (size_t *)local2d, 0, NULL, NULL);
     if (err) {
         printf("Error: failed to execute kernel\nError code: %d", err);
         return EXIT_FAILURE;

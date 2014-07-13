@@ -8,6 +8,7 @@
 
 int oclCompute(unsigned char* h_image, unsigned char* h_bChannel,
             unsigned char* h_gChannel, unsigned char* h_rChannel,
+            float filter[],
             unsigned int width, unsigned int height);
 
 
