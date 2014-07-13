@@ -13,6 +13,8 @@
 		7D745E0A1968293900D95EBB /* compute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7D745E091968293900D95EBB /* compute.cpp */; };
 		7D745E0E19684DA600D95EBB /* libopencv_highgui.2.4.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D745E0D19684DA600D95EBB /* libopencv_highgui.2.4.9.dylib */; };
 		7D745E1019684EA600D95EBB /* libopencv_core.2.4.9.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D745E0F19684EA600D95EBB /* libopencv_core.2.4.9.dylib */; };
+		7DED77D11972CC01005388E2 /* kernel.cl in Sources */ = {isa = PBXBuildFile; fileRef = 7DED77D01972CC01005388E2 /* kernel.cl */; };
+		7DED77D41972D1A1005388E2 /* kernel.cl in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7DED77D01972CC01005388E2 /* kernel.cl */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -26,6 +28,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
+		7DED77D31972D196005388E2 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+				7DED77D41972D1A1005388E2 /* kernel.cl in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +49,7 @@
 		7D745E0B1968295800D95EBB /* compute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compute.h; sourceTree = "<group>"; };
 		7D745E0D19684DA600D95EBB /* libopencv_highgui.2.4.9.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_highgui.2.4.9.dylib; path = ../../../../usr/local/lib/libopencv_highgui.2.4.9.dylib; sourceTree = "<group>"; };
 		7D745E0F19684EA600D95EBB /* libopencv_core.2.4.9.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopencv_core.2.4.9.dylib; path = ../../../../usr/local/lib/libopencv_core.2.4.9.dylib; sourceTree = "<group>"; };
+		7DED77D01972CC01005388E2 /* kernel.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; path = kernel.cl; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,6 +91,7 @@
 				7D745E091968293900D95EBB /* compute.cpp */,
 				7D745E0B1968295800D95EBB /* compute.h */,
 				7D745DFE1968284400D95EBB /* opencl_hdr.1 */,
+				7DED77D01972CC01005388E2 /* kernel.cl */,
 			);
 			path = opencl_hdr;
 			sourceTree = "<group>";
@@ -101,6 +115,7 @@
 				7D745DF51968284400D95EBB /* Sources */,
 				7D745DF61968284400D95EBB /* Frameworks */,
 				7D745DF71968284400D95EBB /* CopyFiles */,
+				7DED77D31972D196005388E2 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -143,6 +158,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7D745E0A1968293900D95EBB /* compute.cpp in Sources */,
+				7DED77D11972CC01005388E2 /* kernel.cl in Sources */,
 				7D745DFD1968284400D95EBB /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -265,6 +281,7 @@
 				7D745E041968284400D95EBB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

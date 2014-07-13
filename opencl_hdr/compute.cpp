@@ -9,20 +9,10 @@
 
 #include <stdio.h>
 #include <OpenCL/OpenCL.h>
+#include <unistd.h>
 
 #define FILTER_SIZE 9
 
-const char* kernelSource = "\n" \
-"__kernel void separateChannels(__global unsigned char* input, __global unsigned char* bChannel,               \n"
-"                               __global unsigned char* gChannel, __global unsigned char* rChannel,            \n"
-"                               const unsigned int width, const unsigned int height, __constant float* filter) \n"
-" {                                                                                                            \n"
-"   int i = get_global_id(0);                                                                                  \n"
-"   if(i<(width*height)) {                                                                                     \n"
-"     bChannel[i] = input[i * 3];                                                                              \n"
-"     gChannel[i] = input[i * 3 + 1];                                                                          \n"
-"     rChannel[i] = input[i * 3 +2]; }                                                                         \n"
-"}                                                                                                             \n";
 
 int oclCompute(unsigned char* h_image, unsigned char* h_bChannel,
             unsigned char* h_gChannel, unsigned char* h_rChannel,
@@ -45,6 +35,26 @@ int oclCompute(unsigned char* h_image, unsigned char* h_bChannel,
     cl_mem d_gChannel;
     cl_mem d_rChannel;
     cl_mem d_filter;
+    
+    
+    // load kernel source
+    FILE *kern_f;
+    size_t sourceSize;
+    char* kernelSource;
+    
+    kern_f = fopen("./kernel.cl", "r");
+    if(kern_f==NULL) {
+        printf("Error: cannot open source file\n");
+        return EXIT_FAILURE;
+    }
+    
+    fseek(kern_f, 0, SEEK_END);
+    sourceSize = ftell(kern_f);
+    fseek(kern_f, 0, SEEK_SET);
+    
+    kernelSource = (char*) malloc(sourceSize + 1);
+    fread(kernelSource, 1, sourceSize, kern_f);
+    fclose(kern_f);
     
     
     int gpu = 1;
